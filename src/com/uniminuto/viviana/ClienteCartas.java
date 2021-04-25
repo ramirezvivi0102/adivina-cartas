@@ -44,7 +44,7 @@ public class ClienteCartas {
         return received;
     }
 
-    public void close() {
+    public void cerrarServidor() {
         socket.close();
     }
 
@@ -53,7 +53,6 @@ public class ClienteCartas {
         ClienteCartas clienteUdp = new ClienteCartas();
         String resultado = clienteUdp.sendMensajeServidor("obtenerCarta");
         System.out.println("fin. Resultado:" + resultado);
-        resultado = clienteUdp.sendMensajeServidor("obtenerCarta");
-        System.out.println("fin. Resultado:" + resultado);
+        clienteUdp.cerrarServidor();
     }
 }
