@@ -18,13 +18,10 @@ public class ClienteCartas {
         try {
             this.inicializarServidor();
             buf = msg.getBytes();
-            DatagramPacket packet
-                    = new DatagramPacket(buf, buf.length, address, 9107);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 9107);
             socket.send(packet);
-            packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet);
-            String received = new String(
-                    packet.getData(), 0, packet.getLength());
+
+            String received = recibirMensageServidor();
             return received;
         }
         // region:Excepciones
@@ -39,32 +36,24 @@ public class ClienteCartas {
         return "fin";
     }
 
+    private String recibirMensageServidor() throws IOException {
+        byte[] buf = new byte[256];
+        DatagramPacket packetResult = new DatagramPacket(buf, buf.length);
+        socket.receive(packetResult);
+        String received = new String(packetResult.getData(), 0, packetResult.getLength());
+        return received;
+    }
+
     public void close() {
         socket.close();
     }
 
     public static void main(String[] args) {
-
-        // Inicializan servidores
+        // Inicializan y ejectuar servidores
         ClienteCartas clienteUdp = new ClienteCartas();
-
-        // Ejecutan Servidores
-        String resultado = clienteUdp.sendMensajeServidor("hola");
-
+        String resultado = clienteUdp.sendMensajeServidor("obtenerCarta");
         System.out.println("fin. Resultado:" + resultado);
-
-//        try {
-//            cliente.inicializarServidor();
-//            servidorCartasUDP.in
-//        } catch (SocketException e) {
-//            System.out.println("Error inicializando cliente servidor con detalles: "+e.getMessage() + ", causado por:" + e.getCause());
-//            e.printStackTrace();
-//        } catch (UnknownHostException e) {
-//             System.out.println("Error inicializando cliente servidor con detalles: "+e.getMessage() + ", causado por:" + e.getCause());
-//            e.printStackTrace();
-//        }
-
-
-
+        resultado = clienteUdp.sendMensajeServidor("obtenerCarta");
+        System.out.println("fin. Resultado:" + resultado);
     }
 }
