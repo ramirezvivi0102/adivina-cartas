@@ -1,19 +1,18 @@
 package com.uniminuto.viviana;
 
+import sun.swing.BakedArrayList;
+
 import java.net.*;
 import java.io.*;
 import java.net.SocketException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class ServidorCartasUDP extends Thread {
     private DatagramSocket socketCliente;
     private boolean running;
     private byte[] bufer = new byte[256];
-    private int numeroMaximoAGenerar = 100;
-    private int cantidadNumerosAGenerar = 32;
+    private int numeroMaximoAGenerar = 40;
+    private int cantidadNumerosAGenerar = 16;
 
    private void inicializarSocketServidor() throws SocketException {
        System.out.println("Servidor CartasUDP Iniciado y Esperando cliente.....");
@@ -43,6 +42,7 @@ public class ServidorCartasUDP extends Thread {
                         break;
                     case "finalizar":
                         ejecutandose = false;
+                        // Obliga a salir del bucle. Detiene el servidor
                         continue;
                 }
 
@@ -78,7 +78,7 @@ public class ServidorCartasUDP extends Thread {
     private String obtenerCartaAleatoria(){
         Random r = new Random();
 
-        Set<Integer> alreadyUsedNumbers = new HashSet<>();
+        List<Integer> alreadyUsedNumbers = new ArrayList<Integer>();
         int i = 1;
         // Vamos a generar 10 números aleatorios sin repetición
         while (alreadyUsedNumbers.size()< cantidadNumerosAGenerar) {
@@ -91,7 +91,7 @@ public class ServidorCartasUDP extends Thread {
             }
         }
 
-        //Collections.shuffle(alreadyUsedNumbers);
+        Collections.shuffle(alreadyUsedNumbers);
 
         StringBuilder tiraNumeros = new StringBuilder();
         for(Integer numero: alreadyUsedNumbers){
