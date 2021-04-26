@@ -1,8 +1,5 @@
 package com.uniminuto.viviana;
 
-import java.net.SocketException;
-import java.net.UnknownHostException;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -11,8 +8,6 @@ public class Main {
         ServidorCartasUDP servidorCartasUDP = new ServidorCartasUDP();
         //ClienteCartas clienteUdp = new ClienteCartas();
 
-        // Ejecutan Servidores
-        servidorCartasUDP.ejecutarServidorUdp();
         //String resultado = clienteUdp.sendMensajeServidor("hola");
 
         //System.out.println("fin. Resultado:" + resultado);

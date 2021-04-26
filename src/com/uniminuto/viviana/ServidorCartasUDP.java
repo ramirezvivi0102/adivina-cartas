@@ -1,7 +1,5 @@
 package com.uniminuto.viviana;
 
-import sun.swing.BakedArrayList;
-
 import java.net.*;
 import java.io.*;
 import java.net.SocketException;
@@ -11,25 +9,25 @@ public class ServidorCartasUDP extends Thread {
     private DatagramSocket socketCliente;
     private boolean running;
     private byte[] bufer = new byte[256];
-    private int numeroMaximoAGenerar = 40;
-    private int cantidadNumerosAGenerar = 16;
+    private int numeroMaximoAGenerar = 100;
+    private int cantidadNumerosAGenerar = 64;
 
-   private void inicializarSocketServidor() throws SocketException {
+   private void inicializarSocketServidor(int puertoEscuchaServidorUDP) throws SocketException {
        System.out.println("Servidor CartasUDP Iniciado y Esperando cliente.....");
        //Creacion del socket
-       socketCliente = new DatagramSocket(9107);
+       socketCliente = new DatagramSocket(puertoEscuchaServidorUDP);
    }
 
-    public void ejecutarServidorUdp(){
+    public void ejecutarServidorUdp(int puertoEscuchaServidorUDP){
         boolean ejecutandose = true;
         try {
-            this.inicializarSocketServidor();
+            this.inicializarSocketServidor(puertoEscuchaServidorUDP);
 
             while (ejecutandose) {
-                DatagramPacket packet
-                        = new DatagramPacket(bufer, bufer.length);
-                socketCliente.receive(packet);
 
+                // Detecta paquete del cliente , tambien detecta el puerto y su dirección ip
+                DatagramPacket packet = new DatagramPacket(bufer, bufer.length);
+                socketCliente.receive(packet);
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
                 packet = new DatagramPacket(bufer, bufer.length, address, port);
@@ -85,26 +83,28 @@ public class ServidorCartasUDP extends Thread {
             // Número aleatorio entre 0 y numeroMaximoAGenerar, excluido el numeroMaximoAGenerar.
             int randomNumber = r.nextInt(numeroMaximoAGenerar);
 
-            // Si no lo hemos usado ya, lo usamos y lo metemos en el conjunto de usados.
+            // Si el nuevo numero aleatorio generado (randomNumber) no ha sido generado previamente, entonces se agrega
             if (!alreadyUsedNumbers.contains(randomNumber)){
                 alreadyUsedNumbers.add(randomNumber);
             }
         }
 
+        // Desordena la lista de numeros ordenados
         Collections.shuffle(alreadyUsedNumbers);
 
+        // Genera una cadena de string (se le ha llamado tira) separados por ; ejemplo: "13;25;2;33;91...ext"
         StringBuilder tiraNumeros = new StringBuilder();
         for(Integer numero: alreadyUsedNumbers){
             tiraNumeros.append(numero + ";");
         }
-
        return tiraNumeros.toString();
     }
 
     public static void main(String[] args) {
         // Iniciar y ejecutar servidor
         ServidorCartasUDP servidorCartasUDP = new ServidorCartasUDP();
-        servidorCartasUDP.ejecutarServidorUdp();
+        int puertoEscuchaServidorUDP = 9107;
+        servidorCartasUDP.ejecutarServidorUdp(puertoEscuchaServidorUDP);
 
     }
 }
